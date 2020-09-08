@@ -34,6 +34,7 @@ Suggested milestones for incremental development:
 import sys
 import re
 import argparse
+__author__ = 'tiree help from Howard'
 
 
 def extract_names(filename):
@@ -45,6 +46,22 @@ def extract_names(filename):
     """
     names = []
     # +++your code here+++
+    with open(filename, 'r') as f:
+        data = f.read()
+    year = re.search(r'Popularity\sin\s(\d\d\d\d)', data)
+    if year:
+        names.append(year.group(1))
+    foundnames = re.findall(
+        r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', data)
+    names_dict = {}
+    for i in foundnames:
+        if i[1] not in names_dict.keys():
+            names_dict[i[1]] = i[0]
+        if i[2] not in names_dict.keys():
+            names_dict[i[2]] = i[0]
+    sorted_names = sorted(names_dict.items())
+    for i in sorted_names:
+        names.append(i[0] + ' ' + i[1])
     return names
 
 
@@ -83,6 +100,14 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
+
+    for file in file_list:
+        result = '\n'.join(extract_names(file))
+        if create_summary:
+            filename = file + '.summary'
+            with open(filename, 'w') as f:
+                f.write(result)
+    print(result)
 
 
 if __name__ == '__main__':
